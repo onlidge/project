@@ -7,8 +7,7 @@
 std::mt19937 RAND(time(nullptr));
 class Monster{
 private:
-    template <typename T>
-    std::string toString(T val)
+    std::string toString(int val)
     {
         std::ostringstream oss;
         oss << val;
@@ -39,10 +38,10 @@ public:
         health += 50 * (level + ran) * diff;
         sum -= ran;
         ran = RAND() % (std::min(sum, 2 * level));
-        evade += 8 * (level + ran) * diff;
+        evade += 6 * (level + ran) * diff;
         sum -= ran;
         ran = RAND() % (std::min(sum, 2 * level));
-        attack += 8 * (level + ran) * diff;
+        attack += 6 * (level + ran) * diff;
         sum -= ran;
         damage += 5 * (level + sum) * diff;
         money = (level * 15 + RAND() % 15) * diff;
