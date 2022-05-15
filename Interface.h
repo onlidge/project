@@ -16,7 +16,6 @@ OS getOs() {
 
 void clearscreen(){
     if (getOs() == Windows) {
-        std::cout << "rr";
         system("cls");
     }
     else if (getOs() == Linux){
@@ -37,7 +36,7 @@ std::string input_text(){
     return command;
 }
 
-void output_text(std::string out){
+void output_text(const std::string& out){
     std::cout << out;
     std::cout <<  "--------------------------------------------\n";
 }

@@ -2,7 +2,7 @@
 #include <sstream>
 
 static int maxlevel = 15;
-static int level_borders[15]{200, 500, 700, 1100, 1700, 2500, 3700, 5100, 6900, 9000, 11200, 14000, 17000, 21000, 25000};
+static int level_borders[15]{100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500, 5500, 6600, 7800, 9100, 10500, 12000};
 
 std::string toString(int val)
 {
@@ -11,43 +11,25 @@ std::string toString(int val)
     return oss.str();
 }
 
+static std::string mage_name = "Mana drain";
+static std::string mage_description = "Restores 20 mana after killing a monster";
+static std::string warrior_name = "Endless potential";
+static std::string warrior_description = "Increases physical damage by 20% of the initial value before each successful attack";
+static std::string berserk_name = "Unstoppable";
+static std::string berserk_description = "If the result of the attack is \"Missed\", deals half damage";
+static std::string warlock_name = "Lifesteal";
+static std::string warlock_description = "Restores 20% health after killing a monster";
+static std::string rogue_name = "Mastery";
+static std::string rogue_description = "Gain 5% evasion and attack rate after killing a monster";
+static std::string archer_name = "Education";
+static std::string archer_description = "Good basic stats";
+
 class Hero{
-    int hlth(){
-        int s = health;
-        s += s * stats[2] / 5;
-        if(Loot[1].tier > 0){
-            s += Loot[1].tier * health / 5;
-        }
-        if(Loot[0].rarity > 0){
-            s += Loot[0].tier * health / 10;
-        }
-        if(Loot[0].rarity > 1){
-            s += Loot[0].tier * health / 10;
-        }
-        if(Loot[2].rarity > 1){
-            s += Loot[2].tier * health / 10;
-        }
-        if(Loot[2].rarity > 0){
-            s += Loot[2].tier * health / 10;
-        }
-        return s;
-    }
     int mn(){
         int s = mana;
         s += s * stats[1] / 5;
         if(Loot[0].tier > 0){
             s += Loot[0].tier * mana / 10;
-        }
-        return s;
-    }
-    int physdmg(){
-        int s = phys_damage;
-        s += s * stats[2] / 5;
-        if(Loot[3].type == 4){
-            s += Loot[3].tier * 2 * phys_damage / 5;
-        }
-        if(Loot[4].type == 6){
-            s += Loot[4].tier * phys_damage / 10;
         }
         return s;
     }
@@ -71,7 +53,7 @@ class Hero{
         if(Loot[4].rarity > 0){
             s += Loot[4].tier * 10;
         }
-        if(Loot[2].tier > 0){
+        if(Loot[2].rarity > 0){
             s += Loot[2].tier * 10;
         }
         return s;
@@ -85,7 +67,7 @@ class Hero{
         if(Loot[4].rarity > 0){
             s += Loot[4].tier * 10;
         }
-        if(Loot[2].tier > 0){
+        if(Loot[2].rarity > 0){
             s += Loot[2].tier * 10;
         }
         return s;
@@ -106,22 +88,166 @@ class Hero{
     }
     int mnrgn(){
         int s = 5;
-        s += stats[0] * 4;
+        s += stats[0] * 2;
         if(Loot[0].rarity > 0){
-            s += Loot[0].tier * 4;
+            s += Loot[0].tier * 3;
         }
         if(Loot[3].rarity > 0){
-            s += Loot[3].tier * 8;
+            s += Loot[3].tier * 5;
         }
         if(Loot[4].type == 7 and Loot[4].rarity > 1){
-            s += Loot[4].tier * 4;
+            s += Loot[4].tier * 3;
         }
         return s;
     }
-    std::string name_stat[10]{"Health", "Health cap", "Mana", "Mana cap", "Physical damage", "Spell damage", "Evasion", "Bonus Attack rate", "Health regeneration", "Mana regeneration"};
+    int hlth(){
+        int s = health;
+        s += s * stats[2] / 5;
+        if(Loot[1].tier > 0){
+            s += Loot[1].tier * health / 5;
+        }
+        if(Loot[0].rarity > 0){
+            s += Loot[0].tier * health / 10;
+        }
+        if(Loot[0].rarity > 1){
+            s += Loot[0].tier * health / 10;
+        }
+        if(Loot[2].rarity > 1){
+            s += Loot[2].tier * health / 10;
+        }
+        if(Loot[2].rarity > -1){
+            s += Loot[2].tier * health / 10;
+        }
+        return s;
+    }
+    int physdmg(){
+        int s = phys_damage;
+        s += s * stats[2] / 5;
+        if(Loot[3].type == 4){
+            s += Loot[3].tier * 2 * phys_damage / 5;
+        }
+        if(Loot[4].type == 6){
+            s += Loot[4].tier * phys_damage / 10;
+        }
+        return s;
+    }
+    std::string name_stat[11]{"Health", "Health cap", "Mana", "Mana cap", "Physical damage", "Spell Amplification", "Evasion", "Bonus Attack rate", "Health regeneration", "Mana regeneration", "Damage"};
 public:
+    int stat[11]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    int dmg(){
+        return stat[4] + stat[5];
+    }
     std::string name = "";
     std::string name_stats[4]{"Intelligence", "Spellpower", "Strength", "Agility"};
+    class passive{
+    public:
+        std::string name = "";
+        std::string description = "";
+        int number = 0;
+        virtual ~passive() {}
+        passive(std::string inname, std::string indescription){
+            name = inname;
+            description = indescription;
+        }
+        virtual int attack_event(bool result, bool dead, Hero *hero) = 0;
+        std::string passive_info(){
+            return name + "\n" + description + "\n";
+        }
+    };
+    class mage: public passive{
+    public:
+        mage(): passive(mage_name, mage_description){
+            number = 0;
+        }
+        int attack_event(bool result, bool dead, Hero *hero) override{
+            if(result and dead){
+                hero->stat[2] += 20;
+            }
+            if(result){
+                return hero->stat[10];
+            }
+            return 0;
+        }
+    };
+    class warrior: public passive{
+    public:
+        warrior(): passive(warrior_name, warrior_description){
+            number = 1;
+        }
+        int attack_event(bool result, bool dead, Hero *hero) override{
+            if(result){
+                hero->stat[4] += hero->physdmg() / 5;
+            }
+            hero->stat[10] = hero->dmg();
+            if(result){
+                return hero->stat[10];
+            }
+            return 0;
+        }
+    };
+    class rogue: public passive{
+    public:
+        rogue(): passive(rogue_name, rogue_description){
+            number = 4;
+        }
+        int attack_event(bool result, bool dead, Hero *hero) override{
+            if(result and dead){
+                hero->stat[6] += 5;
+                hero->stat[7] += 5;
+            }
+            if(result){
+                return hero->stat[10];
+            }
+            return 0;
+        }
+    };
+    class berserk: public passive{
+    public:
+        berserk(): passive(berserk_name, berserk_description){
+            number = 2;
+        }
+        int attack_event(bool result, bool dead, Hero *hero) override{
+            if(result){
+                return hero->stat[10];
+            }
+            return hero->stat[10] / 2;
+        }
+    };
+    class warlock: public passive{
+    public:
+        warlock(): passive(warlock_name, warlock_description){
+            number = 3;
+        }
+        int attack_event(bool result, bool dead, Hero *hero) override{
+            if(result and dead){
+                hero->stat[0] += hero->hlth() / 5;
+            }
+            if(result){
+                return hero->stat[10];
+            }
+            return 0;
+        }
+    };
+    class archer: public passive{
+    public:
+        archer(): passive(archer_name, archer_description){
+            number = 5;
+        }
+        int attack_event(bool result, bool dead, Hero *hero) override{
+            if(result){
+                return hero->stat[10];
+            }
+            return 0;
+        }
+    };
+    mage Mage;
+    warrior Warrior;
+    rogue Rogue;
+    berserk Berserk;
+    warlock Warlock;
+    archer Archer;
+    passive* passivki[6]{&Mage, &Warrior, &Berserk, &Warlock, &Rogue, &Archer};
+    passive* passivka;
     int health = 0;
     int mana = 0;
     int phys_damage = 0;
@@ -135,7 +261,6 @@ public:
     int revive = 0;
     long long time = 0;
     Equipment Loot[5];
-    int stat[10]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     Hero();
     Hero(const std::string in_name, const int stat_1, const int stat_2, const int stat_3, const int stat_4){
         name = in_name;
@@ -155,6 +280,7 @@ public:
         stat[7] = atk();
         stat[8] = hlthrgn();
         stat[9] = mnrgn();
+        stat[10] = dmg();
     }
     std::string stat_info(){
         std::string out = "";
@@ -188,7 +314,7 @@ public:
         std::string out = "";
         out += "Health: " + toString(health) + "\n";
         out += "Physical Damage: " + toString(phys_damage) + "\n";
-        out += "Spell Damage: " + toString(spell_damage) + "\n";
+        out += "Spell Amplification: " + toString(spell_damage) + "\n";
         out += "Mana: " + toString(mana) + "\n";
         return out;
     }

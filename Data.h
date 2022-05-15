@@ -1,12 +1,12 @@
 #include "Locations.h"
 #include "Heroes.h"
 
-static Hero Mage("Mage", 200, 150, 50, 100);
-static Hero Warrior("Warrior", 600, 30, 100, 50);
-static Hero Berserk("Berserk", 150, 60, 200, 50);
-static Hero Witcher("Witcher", 300, 60, 50, 100);
-static Hero Rogue("Rogue", 50, 200, 200, 200);
-static Hero Archer("Archer", 200, 90, 150, 50);
+static Hero Mage("Mage", 200, 70, 0, 100);
+static Hero Warrior("Warrior", 400, 30, 50, 0);
+static Hero Berserk("Berserk", 150, 50, 100, 80);
+static Hero Witcher("Warlock", 300, 60, 50, 100);
+static Hero Rogue("Rogue", 50, 50, 200, 100);
+static Hero Archer("Archer", 250, 90, 150, 100);
 
 static Hero classes[6]{Mage, Warrior, Berserk, Witcher, Rogue, Archer};
 
@@ -18,24 +18,24 @@ static std::string monsters_chapter5[4]{"Baby Dragon", "Dragon", "Dragon Prince"
 
 static Monster Chapter_1[3][3] = {{Monster(1, monsters_chapter1[0], 1), Monster(2, monsters_chapter1[0], 1), Monster(1, monsters_chapter1[0], 1)},
                                   {Monster(2, monsters_chapter1[0], 1), Monster(3, monsters_chapter1[1], 1), Monster(2, monsters_chapter1[0], 1)},
-                                  {Monster(3, monsters_chapter1[1], 1), Monster(4, monsters_chapter1[2], 1), Monster(3, monsters_chapter1[1], 1)}
+                                  {Monster(3, monsters_chapter1[1], 1), Monster(4, monsters_chapter1[2], 2), Monster(3, monsters_chapter1[1], 1)}
 };
 static Monster Chapter_2[3][3] = {{Monster(3, monsters_chapter2[0], 1), Monster(4, monsters_chapter2[0], 1), Monster(3, monsters_chapter2[0], 1)},
                                   {Monster(5, monsters_chapter2[1], 1), Monster(4, monsters_chapter2[0], 1), Monster(5, monsters_chapter2[1], 1)},
-                                  {Monster(5, monsters_chapter2[1], 1), Monster(7, monsters_chapter2[2], 1), Monster(5, monsters_chapter2[1], 1)}
+                                  {Monster(5, monsters_chapter2[1], 1), Monster(7, monsters_chapter2[2], 2), Monster(5, monsters_chapter2[1], 1)}
 };
 static Monster Chapter_3[3][3] = {{Monster(5, monsters_chapter3[0], 1), Monster(6, monsters_chapter3[0], 1),  Monster(5, monsters_chapter3[0], 1)},
                                   {Monster(7, monsters_chapter3[1], 1), Monster(6, monsters_chapter3[0], 1),  Monster(7, monsters_chapter3[1], 1)},
-                                  {Monster(7, monsters_chapter3[1], 1), Monster(10, monsters_chapter3[2], 1), Monster(7, monsters_chapter3[1], 1)}
+                                  {Monster(7, monsters_chapter3[1], 1), Monster(10, monsters_chapter3[2], 2), Monster(7, monsters_chapter3[1], 1)}
 };
 static Monster Chapter_4[3][3] = {{Monster(7, monsters_chapter4[0], 1), Monster(8, monsters_chapter4[0], 1),  Monster(7, monsters_chapter4[0], 1)},
                                   {Monster(9, monsters_chapter4[1], 1), Monster(8, monsters_chapter4[0], 1),  Monster(9, monsters_chapter4[1], 1)},
-                                  {Monster(9, monsters_chapter4[1], 1), Monster(13, monsters_chapter4[2], 1), Monster(9, monsters_chapter4[1], 1)}
+                                  {Monster(9, monsters_chapter4[1], 1), Monster(14, monsters_chapter4[2], 2), Monster(9, monsters_chapter4[1], 1)}
 };
 static Monster Chapter_5[4][3] = {{Monster(9, monsters_chapter5[0], 1),  Monster(10, monsters_chapter5[0], 1), Monster(9, monsters_chapter5[0], 1)},
                                   {Monster(11, monsters_chapter5[1], 1), Monster(10, monsters_chapter5[0], 1), Monster(11, monsters_chapter5[1], 1)},
-                                  {Monster(11, monsters_chapter5[1], 1), Monster(16, monsters_chapter5[2], 1), Monster(11, monsters_chapter5[1], 1)},
-                                  {Monster(16, monsters_chapter5[2], 1), Monster(23, monsters_chapter5[3], 1), Monster(16, monsters_chapter5[2], 1)}
+                                  {Monster(11, monsters_chapter5[1], 1), Monster(16, monsters_chapter5[2], 2), Monster(11, monsters_chapter5[1], 1)},
+                                  {Monster(16, monsters_chapter5[2], 2), Monster(26, monsters_chapter5[3], 3), Monster(16, monsters_chapter5[2], 2)}
 };
 
 static Location Chapters[5]{

@@ -47,7 +47,7 @@ public:
         clearscr = clr;
     }
     std::string available(){
-        std::string out = "Available: ";
+        std::string out = "Available commands: ";
         for (int i = 0; i < commands.size(); ++i) {
             out += commands[i] + " ";
         }
@@ -87,7 +87,7 @@ public:
     }
 };
 
-std::vector<std::string> library_commands{"battle", "equipment", "stats", "game", "exit"};
+std::vector<std::string> library_commands{"battle", "equipment", "stats", "game", "tips", "exit"};
 std::string library_greetings = "Welcome to the Library\n"
                                 "You can find information about this game here\n";
 std::vector<std::string> library_answers{
@@ -95,17 +95,16 @@ std::vector<std::string> library_answers{
     "On each level you must defeat all the monsters or die.\n"
     "The battle with monsters takes place step by step.\n"
     "First you attack, then every monster left alive attacks you.\n"
-    "Each turn, you must choose a physical or magical type of attack, the attack itself, and the first target to attack.\n"
+    "Each turn, you must choose the attack itself, and the first target to attack.\n"
+    "(If the attack is 'two', 'three' or 'ult' next targets will be clockwise 1->2->3->1..)\n"
     "There are 4 + 1 attack types.\n"
     "'one' - You attack the selected target\n"
     "'two' - You attack the selected target, as well as the next\n"
     "'three' - You attack all monsters\n"
     "'ult' - You attack all monsters twice\n"
-    "'zero' - You skip a turn\n"
-    "If you defeated all the monsters, you go to the next level of the cave, and also get random equipment as a reward.\n"
-    "If you died you will be offered a choice: Revive or not.\n"
-    "If you respawn, you will return to the Castle, but you will be deducted points. Otherwise the game will end..\n"
-    "Each level you have to defeat monsters\n",
+    "'zero' - You attack the selected target, but without spell amplification\n"
+    "If you defeated all the monsters, you go to the next level of the cave chapter, and also get random equipment as a reward.\n"
+    "If you respawn, you will return to the Castle, but you will be deducted points.\n",
     "There are 5 types of equipment. Helmet, Armor, Boots, Weapon and Talisman\n"
     "Also, the Weapon is divided into the Staff and the Sword, and the Talisman into the Spell Talisman and the Physical Talisman.\n"
     "Each type specializes in a certain type of damage.\n"
@@ -118,14 +117,19 @@ std::vector<std::string> library_answers{
     "Stat gives bonuses depending on the basic characteristics.\n"
     "What each stat affects:\n"
     "Strength - each stat gives +20% of base health and +20% of base physical damage.\n"
-    "Spell Power - each stat grants +20% base mana and +20% base spell damage.\n"
+    "Spell Power - each stat grants +20% base mana and +20% base spell amplification.\n"
     "Agility - each stat gives +15% evasion and +5% attack rate, as well as +4 health regeneration per turn.\n"
-    "Intelligence - each stat gives +5% evasion and +15% attack rate, as well as +4 mana regeneration per turn.\n",
+    "Intelligence - each stat gives +5% evasion and +15% attack rate, as well as +2 mana regeneration per turn.\n",
     "The goal of the game is to score as many points as possible.\n"
     "You get points for each new chapter completed, equipment by the end of the game, hero level, as well as for some other achievements.\n"
     "You are deducted points for the number of revivals, as well as for the time that the in-game character spent.\n"
     "Time increases every turn of battle or during training.\n"
     "In addition to the goal to score points, there is also a goal to complete all the chapters and defeat the Eternal Dragon.\n",
+    "1) If the game did not write anything, it does not mean that nothing is written.\n"
+    "This means that you did everything right and exactly what was written happened.\n"
+    "The game only responds if you did something wrong.\n"
+    "2) Forging greatly improves equipment and an important part of the game.\n",
+    "\n"
 };
 
 
@@ -259,22 +263,8 @@ public:
     }
 };
 
-std::vector<std::string> attack_type_commands{"spell", "phys"};
-std::string attack_type_greetings = "Choose damage type, write spell or phys\n";
-std::vector<std::string> attack_type_answers{"", "", "", ""};
-
-class attack_type: public low_level_gameplay{
-public:
-    attack_type(): low_level_gameplay("attack_type", attack_type_greetings, attack_type_commands, attack_type_answers, 0){}
-    void execute(int number, Hero *hero) override{
-        outflag = false;
-    };
-};
-
-attack_type Attack_type;
-
 std::vector<std::string> attack_spell_commands{"zero", "one", "two", "three", "ult"};
-std::string attack_spell_greetings = "Choose attack type: one (costs 10 mana), two (costs 30 mana), three (costs 70 mana), ult (costs 150 mana) or zero (costs 0 mana)\n";
+std::string attack_spell_greetings = "Choose attack type: zero (costs 0 mana), one (costs 10 mana), two (costs 30 mana), three (costs 70 mana) or ult (costs 150 mana)\n";
 std::vector<std::string> attack_spell_answers{"", "", "", ""};
 
 class attack_spell: public low_level_gameplay{
@@ -307,7 +297,7 @@ public:
 
 attack_target Attack_target;
 
-std::vector<low_level_gameplay*> battle_lowcommands{&Attack_type, &Attack_spell, &Attack_target};
+std::vector<low_level_gameplay*> battle_lowcommands{&Attack_spell, &Attack_target};
 std::vector<std::string> battle_commands{"1", "2", "3", "4", "5"};
 std::string battle_greetings = "Choose your chapter(from 1 to 5)\n";
 std::vector<std::string> battle_answers{"", "", "", ""};
@@ -329,7 +319,7 @@ public:
     battle(): high_level_gameplay(battle_lowcommands, "cave", battle_greetings, battle_commands, battle_answers, 1){}
     void execute(int number, Hero *hero) override{
         if(hero->cave < number + 1){
-            output_text("Wrong chapter, your current chapter is " + toString(hero->cave + 1) + "\n");
+            output_text("Wrong chapter, your current chapter is " + toString(hero->cave) + "\n");
             output_text("Write something to quit\n");
             std::string command = input_text();
             outflag = false;
@@ -342,18 +332,18 @@ public:
             long long time = 0;
             int oldness = 0;
             bool here = true;
+            bool win = true;
             for (int i = 0; i < location->amount; ++i) {
                 if(not here){
                     break;
                 }
-                bool win = true;
+                win = true;
                 std::string command;
                 while(win){
+                    hero->stat[10] = hero->dmg();
+                    int dmg = hero->stat[10];
                     clearscreen();
                     output_text("Cave Level: " + toString(i + 1) + "\n");
-                    time += 1;
-                    hero->stat[2] = std::min(hero->stat[3], hero->stat[2] = hero->stat[9] + hero->stat[2]);
-                    hero->stat[0] = std::min(hero->stat[1], hero->stat[0] + hero->stat[8]);
                     bool lost = false;
                     for (int j = 0; j < 3; ++j) {
                         std::cout << j + 1 << ")";
@@ -368,15 +358,21 @@ public:
                     if(not lost){
                         break;
                     }
+                    time += 1;
+                    hero->stat[2] = std::min(hero->stat[3], hero->stat[2] = hero->stat[9] + hero->stat[2]);
+                    hero->stat[0] = std::min(hero->stat[1], hero->stat[0] + hero->stat[8]);
                     output_text(hero->name + ":\n" + hero->stat_info());
-                    int type = battle_lowcommands[0]->gameplay(hero);
-                    int dmg = hero->stat[5] * (type == 0) + hero->stat[4] * (type == 1);
                     int count = battle_lowcommands[1]->gameplay(hero);
                     if(count == 4){
                         count = 6;
                     }
+                    if(count == 0){
+                        count = 1;
+                        hero->stat[10] -= hero->stat[5];
+                        dmg -= hero->stat[5];
+                    }
                     int start = 1;
-                    if(count < 3 and count > 0){
+                    if(count < 3){
                         start += battle_lowcommands[2]->gameplay(hero);
                     }
                     clearscreen();
@@ -384,6 +380,7 @@ public:
                         if (not location->levels[i][j % 3].dead) {
                             bool old = true;
                             output_text(hero->name + " is attacking " + location->levels[i][j % 3].name + "\n");
+                            oldness += 1;
                             if(location->levels[i][j % 3].evade > hero->stat[7] + 85 and oldness % 10 == 0){
                                 output_text("Your attack rate is lower than 15%\n"
                                             "Write 'DIE' to die from old age and lose 10 time, or anything else to continue suffering\n");
@@ -393,11 +390,10 @@ public:
                                     time += 10;
                                     old = false;
                                 }
-                                else{
-                                    oldness += 1;
-                                }
                             }
-                            if (old and Attack(hero->stat[7], location->levels[i][j % 3].evade)) {
+                            bool attack_result = Attack(hero->stat[7], location->levels[i][j % 3].evade);
+                            dmg = hero->passivka->attack_event(attack_result, (location->levels[i][j % 3].health - hero->stat[10] <= 0), hero);
+                            if (old) {
                                 output_text("Monster HP: " + toString(location->levels[i][j % 3].health) + " - " +
                                 toString(dmg) + " = " + toString(std::max(location->levels[i][j % 3].health - dmg, 0)) + "\n");
                                 location->levels[i][j % 3].health -= dmg;
@@ -433,15 +429,18 @@ public:
                     hero->revive += 1;
                 }
                 else{
-                    hero->cave = std::max(hero->cave, number + 2);
                     output_text("You won \n");
                     Equipment new_equip = generate_treasure(location->treasure[i], 1 + 2 * (i == 3));
-                    output_text("You found " + new_equip.info() + "\n");
+                    output_text("You f   ound " + new_equip.info() + "\n");
                     change_equip(hero, new_equip);
                     if(number == 4){
                         output_text("You have cleared the cave, good job\n");
                     }
                 }
+            }
+            if(win){
+                output_text("You won \n");
+                hero->cave = std::max(hero->cave, number + 2);
             }
             continue_mechanic();
             hero->time += time;
@@ -460,8 +459,8 @@ void score(Hero *hero){
     long long s = 0;
     output_text("Your ingame time: " + toString(time) + " it is -" + toString(time * 25) + " points\n");
     s -= time * 25;
-    output_text("Your Hero level: " + toString(hero->level) + " it is +" + toString((1 << hero->level) * 20) + " points\n");
-    s += (1 << hero->level) * 20;
+    output_text("Your Hero level: " + toString(hero->level) + " it is +" + toString((hero->level * hero->level) * 100) + " points\n");
+    s += (hero->level * hero->level) * 100;
     output_text("Your Helm: " + hero->Loot[0].info() + " it is +" + toString((1 << hero->Loot[0].tier) * (1 << hero->Loot[0].rarity) * 10) + " points\n");
     s += (1 << hero->Loot[0].tier) * (1 << hero->Loot[0].rarity) * 10;
     output_text("Your Armor: " + hero->Loot[1].info() + " it is +" + toString((1 << hero->Loot[1].tier) * (1 << hero->Loot[1].rarity) * 10) + " points\n");
@@ -474,8 +473,6 @@ void score(Hero *hero){
     s += (1 << hero->Loot[4].tier) * (1 << hero->Loot[4].rarity) * 10;
     output_text("Your best Chapter is: " + toString(chapter - 1) + " it is +" + toString((1 << chapter) * 200) + " points\n");
     s += (1 << chapter) * 200;
-//    std::cout << "Your Stats are: Agility " << hero->Agility << " Strength " << hero->Strength << " Spellpower " << hero->Spellpower << " Intelligence " << hero->stats[0] << " it is +" << (hero->Agility + hero->Strength + hero->Spellpower + hero->stats[0]) * 100 << " points\n";
-//    s += (hero->Agility + hero->Strength + hero->Spellpower + hero->stats[0]) * 100;
     output_text("You were revived: " + toString(revive) + " times. It is -" + toString(revive * 100) + " points\n");
     s -= revive * 100;
     output_text("Your Final score is: " + toString(s) + "\n" + "Well done!\n");
