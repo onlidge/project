@@ -7,7 +7,7 @@ public:
     int amount = 0;
     std::vector<std::vector<Monster>> levels;
     std::vector<int> treasure;
-    Location();
+    Location(){};
     Location(std::string inname, int inamount, const Monster (*Chapter)[3], std::vector<int> treasure_input){
         name = inname;
         amount = inamount;
@@ -18,5 +18,12 @@ public:
             }
         }
         treasure = treasure_input;
+    }
+    void generate_location(){
+        for (int i = 0; i < amount; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                levels[i][j].rebuild();
+            }
+        }
     }
 };
