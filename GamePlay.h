@@ -362,7 +362,7 @@ public:
                     hero->stat[2] = std::min(hero->stat[3], hero->stat[2] = hero->stat[9] + hero->stat[2]);
                     hero->stat[0] = std::min(hero->stat[1], hero->stat[0] + hero->stat[8]);
                     output_text(hero->name + ":\n" + hero->stat_info());
-                    int count = battle_lowcommands[1]->gameplay(hero);
+                    int count = battle_lowcommands[0]->gameplay(hero);
                     if(count == 4){
                         count = 6;
                     }
@@ -373,7 +373,7 @@ public:
                     }
                     int start = 1;
                     if(count < 3){
-                        start += battle_lowcommands[2]->gameplay(hero);
+                        start += battle_lowcommands[1]->gameplay(hero);
                     }
                     clearscreen();
                     for (int j = start - 1; j < start + count - 1; ++j) {
