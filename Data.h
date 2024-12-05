@@ -1,50 +1,41 @@
 #include "Locations.h"
 #include "Heroes.h"
 
-static Hero Mage("Mage", 200, 150, 50, 100);
-static Hero Warrior("Warrior", 600, 30, 100, 50);
-static Hero Berserk("Berserk", 150, 60, 200, 50);
-static Hero Witcher("Witcher", 300, 60, 50, 100);
-static Hero Rogue("Rogue", 50, 200, 200, 200);
-static Hero Archer("Archer", 200, 90, 150, 50);
+static Hero Mage("Mage", 200, 70, 0, 100);
+static Hero Warrior("Warrior", 400, 30, 50, 0);
+static Hero Berserk("Berserk", 150, 50, 100, 80);
+static Hero Witcher("Warlock", 300, 60, 50, 100);
+static Hero Rogue("Rogue", 50, 50, 200, 100);
+static Hero Archer("Archer", 250, 90, 150, 100);
 
-static Monster Chap_1_Stage_1[3]{Monster(1, "Goblin", 1), Monster(1, "Goblin", 1), Monster(1, "Goblin", 1)};
-static Monster Chap_1_Stage_2[3]{Monster(2, "Elite Goblin", 1), Monster(1, "Goblin", 1), Monster(2, "Elite Goblin", 1)};
-static Monster Chap_1_Stage_3[3]{Monster(2, "Elite Goblin", 1), Monster(3, "Goblin King", 1), Monster(1, "Elite Goblin", 1)};
-static Monster Chap_2_Stage_1[3]{Monster(2, "Beast", 1), Monster(2, "Beast", 1), Monster(2, "Beast", 1)};
-static Monster Chap_2_Stage_2[3]{Monster(3, "Elite Beast", 1), Monster(2, "Beast", 1), Monster(3, "Beast", 1)};
-static Monster Chap_2_Stage_3[3]{Monster(3, "Elite Beast", 1), Monster(4, "Beast King", 1), Monster(3, "Elite Beast", 1)};
-static Monster Chap_3_Stage_1[3]{Monster(3, "Zombie", 1), Monster(3, "Zombie", 1), Monster(3, "Zombie", 1)};
-static Monster Chap_3_Stage_2[3]{Monster(4, "Elite Zombie", 1), Monster(3, "Zombie", 1), Monster(4, "Elite Zombie", 1)};
-static Monster Chap_3_Stage_3[3]{Monster(4, "Elite Zombie", 1), Monster(5, "Zombie King", 1), Monster(4, "Elite Zombie", 1)};
-static Monster Chap_4_Stage_1[3]{Monster(4, "Orc", 1), Monster(4, "Orc", 1), Monster(4, "Orc", 1)};
-static Monster Chap_4_Stage_2[3]{Monster(5, "Elite Orc", 1), Monster(4, "Orc", 1), Monster(5, "Elite Orc", 1)};
-static Monster Chap_4_Stage_3[3]{Monster(5, "Elite Orc", 1), Monster(6, "Orc King", 1), Monster(5, "Elite Orc", 1)};
-static Monster Chap_5_Stage_1[3]{Monster(5, "Dragon", 1), Monster(5, "Dragon", 1), Monster(5, "Dragon", 1)};
-static Monster Chap_5_Stage_2[3]{Monster(6, "Elite Dragon", 1), Monster(5, "Dragon", 1), Monster(6, "Elite Dragon", 1)};
-static Monster Chap_5_Stage_3[3]{Monster(6, "Elite Dragon", 1), Monster(7, "Dragon Prince", 1), Monster(6, "Elite Dragon", 1)};
-static Monster Chap_5_Stage_4[3]{Monster(7, "Dragon Prince", 1), Monster(8, "Eternal Dragon", 1), Monster(7, "Dragon Prince", 1)};
+static Hero classes[6]{Mage, Warrior, Berserk, Witcher, Rogue, Archer};
 
-static Monster Chapter_1[3][3] = {{Monster(1, "Goblin", 1), Monster(2, "Goblin", 1), Monster(1, "Goblin", 1)},
-                                  {Monster(2, "Goblin", 1), Monster(3, "Elite Goblin", 1), Monster(2, "Goblin", 1)},
-                                  {Monster(3, "Elite Goblin", 1), Monster(4, "Goblin King", 1), Monster(3, "Elite Goblin", 1)}
+static std::string monsters_chapter1[3]{"Goblin", "Elite Goblin", "Goblin King"};
+static std::string monsters_chapter2[3]{"Boar", "Grizzly", "Hydra"};
+static std::string monsters_chapter3[3]{"Undead", "Ghoul", "Abomination"};
+static std::string monsters_chapter4[3]{"Orc", "Red Orc", "Orc Shaman"};
+static std::string monsters_chapter5[4]{"Baby Dragon", "Dragon", "Dragon Prince", "Eternal Dragon"};
+
+static Monster Chapter_1[3][3] = {{Monster(1, monsters_chapter1[0], 1), Monster(2, monsters_chapter1[0], 1), Monster(1, monsters_chapter1[0], 1)},
+                                  {Monster(2, monsters_chapter1[0], 1), Monster(3, monsters_chapter1[1], 1), Monster(2, monsters_chapter1[0], 1)},
+                                  {Monster(3, monsters_chapter1[1], 1), Monster(4, monsters_chapter1[2], 2), Monster(3, monsters_chapter1[1], 1)}
 };
-static Monster Chapter_2[3][3] = {{Monster(3, "Beast", 1), Monster(4, "Beast", 1), Monster(3, "Beast", 1)},
-                                  {Monster(5, "Elite Beast", 1), Monster(4, "Beast", 1), Monster(5, "Beast", 1)},
-                                  {Monster(5, "Elite Beast", 1), Monster(7, "Beast King", 1), Monster(5, "Elite Beast", 1)}
+static Monster Chapter_2[3][3] = {{Monster(3, monsters_chapter2[0], 1), Monster(4, monsters_chapter2[0], 1), Monster(3, monsters_chapter2[0], 1)},
+                                  {Monster(5, monsters_chapter2[1], 1), Monster(4, monsters_chapter2[0], 1), Monster(5, monsters_chapter2[1], 1)},
+                                  {Monster(5, monsters_chapter2[1], 1), Monster(7, monsters_chapter2[2], 2), Monster(5, monsters_chapter2[1], 1)}
 };
-static Monster Chapter_3[3][3] = {{Monster(5, "Zombie", 1), Monster(6, "Zombie", 1), Monster(5, "Zombie", 1)},
-                                  {Monster(7, "Elite Zombie", 1), Monster(6, "Zombie", 1), Monster(7, "Elite Zombie", 1)},
-                                  {Monster(7, "Elite Zombie", 1), Monster(10, "Zombie King", 1), Monster(7, "Elite Zombie", 1)}
+static Monster Chapter_3[3][3] = {{Monster(5, monsters_chapter3[0], 1), Monster(6, monsters_chapter3[0], 1),  Monster(5, monsters_chapter3[0], 1)},
+                                  {Monster(7, monsters_chapter3[1], 1), Monster(6, monsters_chapter3[0], 1),  Monster(7, monsters_chapter3[1], 1)},
+                                  {Monster(7, monsters_chapter3[1], 1), Monster(10, monsters_chapter3[2], 2), Monster(7, monsters_chapter3[1], 1)}
 };
-static Monster Chapter_4[3][3] = {{Monster(7, "Orc", 1), Monster(8, "Orc", 1), Monster(7, "Orc", 1)},
-                                  {Monster(9, "Elite Orc", 1), Monster(8, "Orc", 1), Monster(9, "Elite Orc", 1)},
-                                  {Monster(9, "Elite Orc", 1), Monster(13, "Orc King", 1), Monster(9, "Elite Orc", 1)}
+static Monster Chapter_4[3][3] = {{Monster(7, monsters_chapter4[0], 1), Monster(8, monsters_chapter4[0], 1),  Monster(7, monsters_chapter4[0], 1)},
+                                  {Monster(9, monsters_chapter4[1], 1), Monster(8, monsters_chapter4[0], 1),  Monster(9, monsters_chapter4[1], 1)},
+                                  {Monster(9, monsters_chapter4[1], 1), Monster(14, monsters_chapter4[2], 2), Monster(9, monsters_chapter4[1], 1)}
 };
-static Monster Chapter_5[4][3] = {{Monster(9, "Dragon", 1), Monster(10, "Dragon", 1), Monster(9, "Dragon", 1)},
-                                  {Monster(11, "Elite Dragon", 1), Monster(10, "Dragon", 1), Monster(11, "Elite Dragon", 1)},
-                                  {Monster(11, "Elite Dragon", 1), Monster(16, "Dragon Prince", 1), Monster(11, "Elite Dragon", 1)},
-                                  {Monster(16, "Dragon Prince", 1), Monster(23, "Eternal Dragon", 1), Monster(16, "Dragon Prince", 1)}
+static Monster Chapter_5[4][3] = {{Monster(9, monsters_chapter5[0], 1),  Monster(10, monsters_chapter5[0], 1), Monster(9, monsters_chapter5[0], 1)},
+                                  {Monster(11, monsters_chapter5[1], 1), Monster(10, monsters_chapter5[0], 1), Monster(11, monsters_chapter5[1], 1)},
+                                  {Monster(11, monsters_chapter5[1], 1), Monster(16, monsters_chapter5[2], 2), Monster(11, monsters_chapter5[1], 1)},
+                                  {Monster(16, monsters_chapter5[2], 2), Monster(26, monsters_chapter5[3], 3), Monster(16, monsters_chapter5[2], 2)}
 };
 
 static Location Chapters[5]{
